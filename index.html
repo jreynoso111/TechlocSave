@@ -11,10 +11,10 @@
     rel="stylesheet" />
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script type="module" src="assets/scripts/authManager.js"></script>
+  <script type="module" src="./assets/scripts/authManager.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <script type="module" src="assets/scripts/datasets.js"></script>
-  <link rel="stylesheet" href="assets/visuals/theme.css" />
+  <script type="module" src="./assets/scripts/datasets.js"></script>
+  <link rel="stylesheet" href="./assets/visuals/theme.css" />
   <style>
     .module-card {
       transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -121,7 +121,7 @@
 
   <script type="module">
     import { createConstellationBackground } from './assets/scripts/constellation.js';
-    import { supabase } from './assets/js/supabaseClient.js';
+    import { supabase } from './assets/scripts/supabaseClient.js';
 
     // --- 1. LÓGICA DE ESTADÍSTICAS (SUPABASE) ---
     const animateValue = (id, start, end, duration) => {

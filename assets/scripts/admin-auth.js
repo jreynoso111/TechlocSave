@@ -1,5 +1,5 @@
 import { SUPABASE_KEY, SUPABASE_URL } from './env.js';
-import { supabase as sharedSupabaseClient } from '../js/supabaseClient.js';
+import { supabase as sharedSupabaseClient } from './supabaseClient.js';
 
 const LOGIN_PAGE = '/pages/login.html';
 const ADMIN_HOME = '/pages/admin/index.html';

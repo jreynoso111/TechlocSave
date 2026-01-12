@@ -1,4 +1,4 @@
-import { supabase } from '../js/supabaseClient.js';
+import { supabase } from './supabaseClient.js';
 
 export class AuthService {
     static async getSession() {

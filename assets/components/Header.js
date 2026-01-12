@@ -8,30 +8,12 @@ export function renderHeader(containerId, options = {}) {
 
   const { maxWidthClass = 'max-w-7xl' } = options;
 
-  // Determine base path based on current location depth
-  const pathParts = window.location.pathname.split('/').filter(Boolean);
-  const isGithubPages = window.location.hostname.includes('github.io');
-  const repoName = isGithubPages ? 'TechlocSave' : '';
-
-  // Find where we are relative to the root
-  let depth = 0;
-  if (isGithubPages) {
-    // On Github Pages, the first part is the repo name
-    depth = pathParts.length - 1;
-    if (pathParts[0] === repoName) depth--;
-  } else {
-    depth = pathParts.length;
-  }
-
-  // Calculate relative prefix
-  // If we are in /pages/admin/, depth is 2, so we need ../../
-  // If we are in /pages/, depth is 1, so we need ../
-  // If we are at root, depth is 0, so we need ./
-
-  // Simpler approach: check if we are in 'pages' folder
+  // Determine relative path prefix
+  // This ensures links work on both local dev and GitHub Pages (subdirectory)
   const currentPath = window.location.pathname;
   let prefix = './';
-  if (currentPath.includes('/pages/admin/')) {
+  // Check for admin pages deep in structure
+  if (currentPath.includes('/pages/admin/') || currentPath.includes('/admin/')) {
     prefix = '../../';
   } else if (currentPath.includes('/pages/')) {
     prefix = '../';

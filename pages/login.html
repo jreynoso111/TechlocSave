@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script type="module" src="../assets/js/supabaseClient.js"></script>
+  <script type="module" src="../assets/scripts/supabaseClient.js"></script>
   <script type="module" src="../assets/scripts/authManager.js"></script>
   <script>
     tailwind.config = {
@@ -79,7 +79,7 @@
 
   <script type="module">
     import { createConstellationBackground } from '../assets/scripts/constellation.js';
-    import { supabase as supabaseClient } from '../assets/js/supabaseClient.js';
+    import { supabase as supabaseClient } from '../assets/scripts/supabaseClient.js';
     import { logAdminEvent } from '../assets/scripts/adminAudit.js';
 
     const loginForm = document.getElementById('login-form');

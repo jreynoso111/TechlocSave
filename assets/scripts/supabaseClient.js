@@ -1,4 +1,4 @@
-import { SUPABASE_KEY, SUPABASE_URL } from '../scripts/env.js';
+import { SUPABASE_KEY, SUPABASE_URL } from './env.js';
 
 // Determine the createClient function
 let createClientFunc;
@@ -40,7 +40,7 @@ const supabase = createClientFunc ? createClientFunc(SUPABASE_URL || '', SUPABAS
   },
 }) : null;
 
-// For compatibility with legacy scripts that expect window.supabaseClient
+// compatibility with legacy scripts
 if (typeof window !== 'undefined') {
   window.supabaseClient = supabase;
 }
