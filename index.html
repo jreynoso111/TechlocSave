@@ -36,7 +36,7 @@
   </div>
 
   <header class="sticky top-0 z-50 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md">
-    <div class="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
+    <div class="mx-auto max-w-6xl px-6 py-4 flex items-center">
       <a href="index.html" class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 font-black text-white shadow-lg shadow-blue-500/20">TL</div>
         <div class="hidden sm:block">
@@ -45,11 +45,14 @@
         </div>
       </a>
 
-      <nav class="hidden md:flex items-center gap-1">
+      <nav class="hidden md:flex items-center gap-1 ml-auto mr-6">
         <a href="index.html" class="rounded-full bg-slate-800 px-4 py-1.5 text-sm font-medium text-white">Home</a>
-        <a href="pages/vehicles.html" class="rounded-full px-4 py-1.5 text-sm font-medium text-slate-400 hover:bg-slate-900 hover:text-white transition">Map</a>
-        <a href="pages/inventory-control.html" class="rounded-full px-4 py-1.5 text-sm font-medium text-slate-400 hover:bg-slate-900 hover:text-white transition">Inventory</a>
-        <a href="pages/admin/services.html" class="rounded-full px-4 py-1.5 text-sm font-medium text-slate-400 hover:bg-slate-900 hover:text-white transition">Services</a>
+        
+        <a href="pages/vehicles.html" class="auth-link hidden rounded-full px-4 py-1.5 text-sm font-medium text-slate-400 hover:bg-slate-900 hover:text-white transition">Map</a>
+        <a href="pages/inventory-control.html" class="auth-link hidden rounded-full px-4 py-1.5 text-sm font-medium text-slate-400 hover:bg-slate-900 hover:text-white transition">Inventory</a>
+        <a href="pages/admin/services.html" class="auth-link hidden rounded-full px-4 py-1.5 text-sm font-medium text-slate-400 hover:bg-slate-900 hover:text-white transition">Services</a>
+        
+        <a href="pages/contact.html" class="rounded-full px-4 py-1.5 text-sm font-medium text-slate-400 hover:bg-slate-900 hover:text-white transition">Contact</a>
       </nav>
 
       <div class="flex items-center gap-3">
@@ -116,11 +119,9 @@
   </main>
 
   <script type="module">
-    // IMPORTANTE: Rutas relativas con ./ para GitHub Pages
     import { createConstellationBackground } from './assets/scripts/constellation.js';
     import { supabase } from './assets/scripts/supabaseClient.js';
 
-    // Función para animar números
     const animateValue = (id, end) => {
       const el = document.getElementById(id);
       if (!el) return;
@@ -162,18 +163,28 @@
 
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
+      const authLinks = document.querySelectorAll('.auth-link');
+      const loginBtn = document.getElementById('nav-login');
+      const logoutBtn = document.getElementById('nav-logout');
+
       if (session) {
-        document.getElementById('nav-login').classList.add('hidden');
-        const logout = document.getElementById('nav-logout');
-        logout.classList.remove('hidden');
-        logout.onclick = async () => {
+        // Logueado: Mostrar links protegidos y botón Logout
+        authLinks.forEach(link => link.classList.remove('hidden'));
+        loginBtn.classList.add('hidden');
+        logoutBtn.classList.remove('hidden');
+        
+        logoutBtn.onclick = async () => {
           await supabase.auth.signOut();
           window.location.reload();
         };
+      } else {
+        // No logueado: Ocultar links protegidos y mostrar Login
+        authLinks.forEach(link => link.classList.add('hidden'));
+        loginBtn.classList.remove('hidden');
+        logoutBtn.classList.add('hidden');
       }
     };
 
-    // Inicialización segura
     document.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
       try { createConstellationBackground(); } catch(e) { console.error("Canvas error"); }
