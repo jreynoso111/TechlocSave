@@ -11,7 +11,9 @@
     rel="stylesheet" />
 
 
-
+  <link rel="stylesheet" href="../../assets/visuals/theme.css" />
+  <script type="module" src="../../assets/scripts/authManager.js"></script>
+  <script type="module" src="../../assets/scripts/admin-auth.js"></script>
   <style>
     body {
       background-color: #020617;
@@ -70,10 +72,12 @@
     }
   </style>
   <link rel="stylesheet" href="../../assets/visuals/theme.css" />
+  <script type="module" src="../../assets/scripts/authManager.js"></script>
 </head>
 
 <body class="min-h-screen text-slate-50 relative selection:bg-blue-500/30 overflow-x-hidden">
 
+  <div id="header-root"></div>
   <div id="admin-header-root"></div>
   <script type="module">
     import { renderHeader } from '../../assets/components/Header.js';

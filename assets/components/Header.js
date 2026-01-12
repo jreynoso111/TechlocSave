@@ -2,9 +2,11 @@
  * Renders the common header for all TechLoc pages.
  * @param {string} containerId - The ID of the container element.
  */
-export function renderHeader(containerId) {
+export function renderHeader(containerId, options = {}) {
   const container = document.getElementById(containerId);
   if (!container) return;
+
+  const { maxWidthClass = 'max-w-7xl' } = options;
 
   // Determine base path based on current location depth
   const pathParts = window.location.pathname.split('/').filter(Boolean);
@@ -39,7 +41,7 @@ export function renderHeader(containerId) {
 
   container.innerHTML = `
   <header class="border-b border-slate-800 bg-slate-950/90 backdrop-blur z-50 sticky top-0">
-    <div class="ml-auto mr-0 relative max-w-7xl px-6 py-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-6">
+    <div class="mx-auto relative ${maxWidthClass} px-6 py-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-6">
 
       <div class="flex items-center justify-between gap-4 md:flex-none">
         <a href="${prefix}index.html" class="flex items-center gap-3">
@@ -57,7 +59,7 @@ export function renderHeader(containerId) {
         </button>
       </div>
 
-      <div id="primary-nav" class="hidden flex-col gap-3 rounded-2xl border border-slate-800 bg-slate-900/90 p-4 text-sm font-semibold text-slate-200 shadow-lg shadow-blue-900/20 md:mt-0 md:flex md:flex-1 md:flex-row md:items-center md:justify-between md:border-0 md:bg-transparent md:p-0 md:shadow-none">
+      <div id="primary-nav" class="hidden flex-col gap-3 rounded-2xl border border-slate-800 bg-slate-900/90 p-4 text-sm font-semibold text-slate-200 shadow-lg shadow-blue-900/20 md:mt-0 md:flex md:flex-1 md:flex-row md:items-center md:justify-end md:gap-6 md:border-0 md:bg-transparent md:p-0 md:shadow-none">
 
         <nav class="flex flex-col gap-2 md:flex-row md:items-center md:gap-1">
           <a id="nav-home" href="${prefix}index.html" class="rounded-full px-3 py-1 transition-colors hover:text-white hover:bg-slate-800">Home</a>

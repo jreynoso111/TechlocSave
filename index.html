@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
     rel="stylesheet" />
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script type="module" src="assets/scripts/authManager.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script type="module" src="assets/scripts/datasets.js"></script>
@@ -33,7 +34,7 @@
 <body class="min-h-screen bg-slate-950 font-sans text-slate-50 selection:bg-blue-500/30">
 
   <!-- Background Canvas -->
-  <div class="pointer-events-none fixed inset-0 z-0 opacity-80">
+  <div class="pointer-events-none fixed inset-0 z-0 mix-blend-screen" aria-hidden="true">
     <canvas id="constellation-canvas" class="h-full w-full"></canvas>
   </div>
 
@@ -46,7 +47,7 @@
   <main class="relative z-10 mx-auto max-w-[1400px] px-6 py-12 md:py-24">
 
     <!-- Hero Section -->
-    <div class="hero-gradient mb-20 text-center">
+    <div class="mb-20 text-center">
       <div class="mb-8 flex justify-center">
         <div
           class="group relative flex h-24 w-24 items-center justify-center rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl transition-all duration-500 hover:border-blue-500">
@@ -72,11 +73,6 @@
       </p>
 
       <div class="flex flex-wrap items-center justify-center gap-4">
-        <a id="hero-login-btn" href="pages/login.html"
-          class="inline-flex items-center gap-2 rounded-full bg-blue-600 px-8 py-4 text-sm font-bold text-white shadow-xl shadow-blue-900/40 transition-all hover:bg-blue-50 hover:text-blue-600 hover:-translate-y-1">
-          <i data-lucide="log-in" class="h-4 w-4"></i>
-          Get Started
-        </a>
         <a id="hero-dashboard-btn" href="pages/admin/index.html"
           class="hidden inline-flex items-center gap-2 rounded-full bg-slate-800 border border-slate-700 px-8 py-4 text-sm font-bold text-white transition-all hover:bg-slate-700 hover:border-blue-500 hover:-translate-y-1">
           <i data-lucide="layout-dashboard" class="h-4 w-4"></i>
@@ -126,7 +122,6 @@
   <script type="module">
     import { createConstellationBackground } from './assets/scripts/constellation.js';
     import { supabase } from './assets/js/supabaseClient.js';
-    import { AuthService } from './assets/scripts/AuthService.js';
 
     // --- 1. LÓGICA DE ESTADÍSTICAS (SUPABASE) ---
     const animateValue = (id, start, end, duration) => {
@@ -168,26 +163,11 @@
       } catch (err) { console.warn('Live stats loading failed'); }
     };
 
-    // --- 2. AUTH UI UPDATE ---
-    const updateAuthUI = async () => {
-      const session = await AuthService.getSession();
-      const isLoggedIn = !!session;
-      const loginBtn = document.getElementById('hero-login-btn');
-      const dashboardBtn = document.getElementById('hero-dashboard-btn');
-
-      if (loginBtn) loginBtn.classList.toggle('hidden', isLoggedIn);
-      if (dashboardBtn) dashboardBtn.classList.toggle('hidden', !isLoggedIn);
-    };
-
     // --- 3. INICIALIZACIÓN ---
     document.addEventListener('DOMContentLoaded', () => {
       if (window.lucide) window.lucide.createIcons();
       createConstellationBackground();
       fetchServiceStats();
-      updateAuthUI();
-
-      // Listen for auth changes to update hero buttons
-      AuthService.onAuthStateChange(() => updateAuthUI());
     });
   </script>
 </body>

@@ -240,25 +240,9 @@ const requireSession = async () => {
 };
 
 const ensureLogoutButton = () => {
-  let logoutButton = document.querySelector('[data-admin-logout]');
-
-  if (!logoutButton) {
-    const headerActions =
-      document.querySelector('[data-admin-actions]') ||
-      document.querySelector('header .md\\:flex') ||
-      document.querySelector('header .flex.items-center.justify-between');
-    if (!headerActions) return null;
-
-    logoutButton = document.createElement('button');
-    logoutButton.type = 'button';
-    logoutButton.dataset.adminLogout = 'true';
-    logoutButton.className =
-      'hidden items-center gap-2 rounded-full border border-red-700 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-red-200 transition hover:border-red-400 hover:text-white';
-    logoutButton.innerHTML = '<span>Logout</span>';
-    headerActions.appendChild(logoutButton);
-  }
-
-  return logoutButton;
+  // We only want to control an existing logout button if present, 
+  // ensuring we don't accidentally inject one into random containers.
+  return document.querySelector('[data-admin-logout]');
 };
 
 const setupLogoutButton = () => {

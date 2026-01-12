@@ -10,6 +10,9 @@
 
 
   <link rel="stylesheet" href="../../assets/visuals/theme.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="../../assets/scripts/authManager.js"></script>
+  <script type="module" src="../../assets/scripts/admin-auth.js"></script>
 
   <style>
     html,
@@ -391,15 +394,15 @@
 <body class="min-h-screen bg-slate-950 text-slate-50 relative">
 
   <!-- HEADER -->
-  <div id="admin-header-root"></div>
+  <div id="header-root"></div>
   <script type="module">
     import { renderHeader } from '../../assets/components/Header.js';
-    import { renderAdminHeader } from '../../assets/components/AdminHeader.js';
     renderHeader('header-root');
-    renderAdminHeader('admin-header-root');
   </script>
 
-  <canvas id="constellation-canvas" class="pointer-events-none fixed inset-0 -z-10"></canvas>
+  <div class="pointer-events-none fixed inset-0 z-0 mix-blend-screen" aria-hidden="true">
+    <canvas id="constellation-canvas" class="h-full w-full"></canvas>
+  </div>
 
   <main class="mx-auto w-full max-w-[1400px] px-6 py-5 lg:px-10 space-y-5">
     <section class="flex min-w-0 flex-col gap-4">
@@ -553,8 +556,8 @@
     import { supabase as supabaseClient } from '../../assets/js/supabaseClient.js';
     import { logAdminEvent } from '../../assets/scripts/adminAudit.js';
 
-    const READ_TABLE = 'Services';
-    const WRITE_TABLE = 'Services';
+    const READ_TABLE = 'services';
+    const WRITE_TABLE = 'services';
     const CHANGE_LOG_TABLE = 'admin_change_log';
     const PAGE_CATEGORY = 'GPS Technician';
 
@@ -2090,6 +2093,15 @@
     const refresh = async () => {
       skeleton.show();
 
+      if (!supabaseClient) {
+        console.error('Supabase client is not initialized.');
+        skeleton.hide();
+        els.status.textContent = 'Client Error';
+        els.tbody.innerHTML = `<tr><td class="compact-td text-sm text-red-200" colspan="${getVisibleOrderedColumns().length || 1}">Supabase client initialization failed. Check console.</td></tr>`;
+        showToast('Supabase client unavailable.', 'error');
+        return;
+      }
+
       try {
         const { data, error } = await supabaseClient.from(READ_TABLE).select('*');
         if (error) throw error;
@@ -2104,10 +2116,10 @@
         console.error('Error fetching services:', error);
         skeleton.hide();
         els.status.textContent = 'Error loading data';
-        els.tbody.innerHTML = `<tr><td class="compact-td text-sm text-red-200" colspan="${getVisibleOrderedColumns().length || 1}">Unable to load data.</td></tr>`;
+        els.tbody.innerHTML = `<tr><td class="compact-td text-sm text-red-200" colspan="${getVisibleOrderedColumns().length || 1}">Unable to load data: ${error.message || 'Unknown error'}</td></tr>`;
         els.paginationSummary.textContent = 'No data available';
         els.pageIndicator.textContent = '—';
-        showToast('Error loading services data. Please try again.', 'error');
+        showToast('Error loading services data: ' + (error.message || 'Check console'), 'error');
       }
     };
 

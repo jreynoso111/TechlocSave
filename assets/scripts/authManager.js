@@ -7,7 +7,8 @@ class AuthUIManager {
       logout: 'nav-logout',
       dashboard: 'nav-dashboard',
       services: 'nav-services',
-      control: 'nav-control-view'
+      control: 'nav-control-view',
+      inventory: 'nav-inventory-control'
     };
 
     this.prefix = './';
@@ -72,6 +73,7 @@ class AuthUIManager {
     const logoutBtn = document.getElementById(this.navIds.logout);
     const dashboardBtn = document.getElementById(this.navIds.dashboard);
     const servicesBtn = document.getElementById(this.navIds.services);
+    const controlBtn = document.getElementById(this.navIds.control);
 
     // Toggle Login/Logout visibility AND text
     if (loginBtn) {
@@ -92,6 +94,14 @@ class AuthUIManager {
         logoutBtn.classList.add('hidden');
       }
     }
+
+    // Protected Navigation Items
+    const protectedBtns = [servicesBtn, inventoryBtn, controlBtn];
+    protectedBtns.forEach(btn => {
+      if (btn) {
+        btn.classList.toggle('hidden', !isLoggedIn);
+      }
+    });
 
     // Hero buttons (index.html)
     const heroLoginBtn = document.getElementById('hero-login-btn');

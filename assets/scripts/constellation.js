@@ -11,7 +11,7 @@ export const createConstellationBackground = (canvasId = 'constellation-canvas')
 
   const resize = () => {
     width = window.innerWidth;
-    height = Math.max(window.innerHeight, document.documentElement.scrollHeight);
+    height = window.innerHeight;
     canvas.width = width;
     canvas.height = height;
 

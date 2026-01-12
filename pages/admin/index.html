@@ -9,6 +9,9 @@
     rel="stylesheet" />
 
   <link rel="stylesheet" href="../../assets/visuals/theme.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="../../assets/scripts/authManager.js"></script>
+  <script type="module" src="../../assets/scripts/admin-auth.js"></script>
 </head>
 
 <body class="min-h-screen bg-slate-950 text-slate-50">
@@ -21,6 +24,7 @@
   </div>
 
   <div data-auth-protected class="hidden">
+    <div id="header-root"></div>
     <div id="admin-header-root"></div>
     <script type="module">
       import { renderHeader } from '../../assets/components/Header.js';

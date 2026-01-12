@@ -7,7 +7,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 async function testConnection() {
     console.log('Testing connection to Supabase...');
-    const { data, error } = await supabase.from('profiles').select('*').limit(5);
+    const { data, error } = await supabase.from('services').select('*').limit(5);
 
     if (error) {
         console.error('Profiles Query Error:', error.message);
