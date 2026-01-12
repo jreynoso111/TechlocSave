@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TechLoc • Service Control</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          colors: { slate: { 950: '#020617' } },
+        },
+      },
+    };
+  </script>
+
+
+  <style>
+    #topScrollWrap::-webkit-scrollbar {
+      height: 12px;
+    }
+
+    #topScrollWrap::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, .35);
+      border-radius: 999px;
+    }
+
+    #topScrollWrap::-webkit-scrollbar-track {
+      background: rgba(2, 6, 23, .35);
+      border-radius: 999px;
+    }
+
+    #tableScrollWrap::-webkit-scrollbar {
+      height: 12px;
+      width: 12px;
+    }
+
+    #tableScrollWrap::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, .35);
+      border-radius: 999px;
+    }
+
+    #tableScrollWrap::-webkit-scrollbar-track {
+      background: rgba(2, 6, 23, .35);
+      border-radius: 999px;
+    }
+
+    th.dragging {
+      opacity: .45;
+    }
+
+    th.drop-target {
+      outline: 2px solid rgba(59, 130, 246, .6);
+      outline-offset: -2px;
+    }
+
+    body.resizing {
+      cursor: col-resize !important;
+      -webkit-user-select: none !important;
+         -moz-user-select: none !important;
+              user-select: none !important;
+    }
+
+    .col-resizer {
+      position: absolute;
+      top: 0;
+      right: -2px;
+      width: 8px;
+      height: 100%;
+      cursor: col-resize;
+    }
+
+    .col-resizer::after {
+      content: "";
+      position: absolute;
+      right: 3px;
+      top: 20%;
+      width: 1px;
+      height: 60%;
+      background: rgba(148, 163, 184, .25);
+    }
+
+    .no-drag {
+      -webkit-user-drag: none;
+      user-drag: none;
+    }
+
+    .table-header-label {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      white-space: normal;
+      line-height: 1.1;
+    }
+
+    .header-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 8px;
+      width: 220px;
+      background: rgba(2, 6, 23, .95);
+      border: 1px solid rgba(30, 41, 59, .8);
+      border-radius: 14px;
+      padding: 10px;
+      z-index: 40;
+      box-shadow: 0 18px 40px rgba(2, 6, 23, .6);
+    }
+
+    .header-menu button {
+      text-align: left;
+    }
+
+    .editable-cell {
+      cursor: cell;
+    }
+
+    .cell-editing {
+      background: rgba(30, 41, 59, .35);
+    }
+
+    .header-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: flex-start;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    th.header-compact .header-actions {
+      gap: 4px;
+    }
+
+    /* --- Gantt --- */
+    .gantt-track {
+      position: relative;
+      height: 16px;
+      border-radius: 999px;
+      background: rgba(2, 6, 23, .45);
+      border: 1px solid rgba(148, 163, 184, .18);
+      overflow: hidden;
+    }
+
+    .gantt-bar {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      border-radius: 999px;
+      background: rgba(59, 130, 246, .55);
+      border: 1px solid rgba(59, 130, 246, .85);
+      box-shadow: 0 0 0 1px rgba(2, 6, 23, .35) inset;
+    }
+
+    .gantt-bar.waiting {
+      background: rgba(245, 158, 11, .40);
+      border-color: rgba(245, 158, 11, .80);
+    }
+
+    .gantt-bar.closed {
+      background: rgba(16, 185, 129, .40);
+      border-color: rgba(16, 185, 129, .80);
+    }
+
+    .gantt-bar.open {
+      background: rgba(148, 163, 184, .25);
+      border-color: rgba(148, 163, 184, .55);
+    }
+
+    .gantt-bar.progress {
+      background: rgba(59, 130, 246, .55);
+      border-color: rgba(59, 130, 246, .85);
+    }
+
+    .gantt-gridline {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: rgba(148, 163, 184, .10);
+      pointer-events: none;
+    }
+
+    /* VIN combobox dropdown */
+    .combo-menu::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    .combo-menu::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, .25);
+      border-radius: 999px;
+    }
+
+    .combo-menu::-webkit-scrollbar-track {
+      background: rgba(2, 6, 23, .25);
+      border-radius: 999px;
+    }
+  </style>
+  <script type="module" crossorigin src="/TechlocSave/assets/servicesRequest-C-2kRPFG.js"></script>
+  <link rel="modulepreload" crossorigin href="/TechlocSave/assets/constellation-uI2meXO3.js">
+  <link rel="modulepreload" crossorigin href="/TechlocSave/assets/Header-CYr_2qJu.js">
+  <link rel="stylesheet" crossorigin href="/TechlocSave/assets/constellation-BFegDoL-.css">
+</head>
+
+<body class="min-h-screen bg-slate-950 text-slate-50">
+  <div class="pointer-events-none fixed inset-0 z-0 opacity-80 mix-blend-screen" aria-hidden="true">
+    <canvas id="constellation-canvas" class="h-full w-full"></canvas>
+  </div>
+
+  <div id="header-root" data-title="Service Control"></div>
+
+  <main class="relative z-10 flex flex-col gap-8 py-10" style="padding-left:1in; padding-right:1in;">
+
+    <section class="rounded-3xl border border-slate-900 bg-slate-900/70 p-6 shadow-xl shadow-blue-900/30">
+      <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div class="space-y-1">
+          <p class="text-xs font-semibold uppercase tracking-[0.2em] text-blue-200">Board</p>
+          <h2 class="text-2xl font-black text-white">Service Requests</h2>
+          <p class="text-sm text-slate-300">Track any service requested for any vehicle — table, kanban, calendar,
+            gantt, and saved filters.</p>
+        </div>
+
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+          <div class="flex items-center gap-2 rounded-2xl border border-slate-800 bg-slate-950/40 p-1">
+            <button data-view="table"
+              class="viewBtn rounded-2xl px-3 py-2 text-xs font-bold text-white bg-blue-600">Table</button>
+            <button data-view="kanban"
+              class="viewBtn rounded-2xl px-3 py-2 text-xs font-bold text-slate-300 hover:text-white">Kanban</button>
+            <button data-view="calendar"
+              class="viewBtn rounded-2xl px-3 py-2 text-xs font-bold text-slate-300 hover:text-white">Calendar</button>
+            <button data-view="gantt"
+              class="viewBtn rounded-2xl px-3 py-2 text-xs font-bold text-slate-300 hover:text-white">Gantt</button>
+          </div>
+
+          <button id="newRequestBtn"
+            class="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-4 py-2 text-sm font-black text-white shadow shadow-blue-500/20 transition hover:bg-blue-500">
+            <i data-lucide="plus" class="h-4 w-4"></i>
+            New request
+          </button>
+        </div>
+      </div>
+
+      <div class="mt-5 flex flex-wrap items-center gap-2 text-xs">
+        <button data-filter="Open"
+          class="filterChip rounded-full border border-slate-800 bg-slate-950/30 px-3 py-1 font-semibold text-slate-200 hover:bg-slate-800/60">Open</button>
+        <button data-filter="In Progress"
+          class="filterChip rounded-full border border-slate-800 bg-slate-950/30 px-3 py-1 font-semibold text-slate-200 hover:bg-slate-800/60">In
+          progress</button>
+        <button data-filter="Waiting"
+          class="filterChip rounded-full border border-slate-800 bg-slate-950/30 px-3 py-1 font-semibold text-slate-200 hover:bg-slate-800/60">Waiting</button>
+        <button data-filter="Closed"
+          class="filterChip rounded-full border border-slate-800 bg-slate-950/30 px-3 py-1 font-semibold text-slate-200 hover:bg-slate-800/60">Closed</button>
+        <span class="ml-2 text-slate-500">Tip: these map to your status values.</span>
+      </div>
+    </section>
+
+    <!-- Table -->
+    <section id="tableView"
+      class="rounded-3xl border border-slate-900 bg-slate-900/70 p-0 shadow-xl shadow-blue-900/30 overflow-hidden">
+      <div class="flex items-center justify-between border-b border-slate-800 px-6 py-4">
+        <p class="text-sm font-bold text-white">All requests</p>
+        <p id="resultsMeta" class="text-xs text-slate-400">0 items</p>
+      </div>
+
+      <div class="flex flex-col gap-3 border-b border-slate-800 px-6 py-4">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div class="flex items-center gap-2">
+            <button id="prevPage"
+              class="rounded-xl border border-slate-700 px-4 py-2 text-sm disabled:opacity-40">Previous</button>
+            <button id="nextPage"
+              class="rounded-xl border border-slate-700 px-4 py-2 text-sm disabled:opacity-40">Next</button>
+
+            <div class="relative ml-2">
+              <button id="columnsBtn" type="button"
+                class="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-950/40 px-4 py-2 text-sm font-bold text-slate-200 hover:bg-slate-800">
+                <i data-lucide="columns-2" class="h-4 w-4"></i>
+                Columns
+                <i data-lucide="chevron-down" class="h-4 w-4 text-slate-400"></i>
+              </button>
+
+              <div id="columnsMenu"
+                class="hidden absolute left-0 mt-2 w-80 rounded-2xl border border-slate-800 bg-slate-950 shadow-2xl overflow-hidden z-50">
+                <div class="flex items-center justify-between gap-2 border-b border-slate-800 px-4 py-3">
+                  <p class="text-xs font-black uppercase tracking-[0.14em] text-slate-300">Show / Hide Columns</p>
+                  <div class="flex items-center gap-2">
+                    <button id="colsAll" type="button"
+                      class="text-xs font-bold text-blue-200 hover:text-white">All</button>
+                    <button id="colsNone" type="button"
+                      class="text-xs font-bold text-slate-300 hover:text-white">None</button>
+                  </div>
+                </div>
+
+                <div class="max-h-80 overflow-auto px-2 py-2" id="columnsList"></div>
+
+                <div class="border-t border-slate-800 px-4 py-3 flex items-center justify-between">
+                  <p class="text-xs text-slate-400">Drag headers to reorder • Drag edge to resize</p>
+                  <button id="colsClose" type="button"
+                    class="rounded-xl border border-slate-700 px-3 py-1 text-xs font-bold hover:bg-slate-800">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p id="pageMeta" class="text-sm text-slate-400"></p>
+        </div>
+
+        <div id="topScrollWrap"
+          class="overflow-x-auto overflow-y-hidden rounded-2xl border border-slate-800 bg-slate-950/40">
+          <div id="topScrollInner" class="h-4"></div>
+        </div>
+      </div>
+
+      <div id="tableScrollWrap" class="overflow-auto px-4 pb-4">
+        <table id="dataTable" class="min-w-[1200px] w-full text-left text-[11px]" style="table-layout: fixed;">
+          <colgroup id="colGroup"></colgroup>
+          <thead class="sticky top-0 bg-slate-950/80 backdrop-blur">
+            <tr id="tableHeaderRow" class="text-[10px] uppercase tracking-[0.14em] text-slate-400"></tr>
+          </thead>
+          <tbody id="tableBody" class="divide-y divide-slate-800"></tbody>
+        </table>
+      </div>
+
+      <div id="emptyState" class="hidden px-6 py-10">
+        <div class="rounded-3xl border border-slate-800 bg-slate-950/40 p-6">
+          <p id="emptyTitle" class="text-sm font-bold text-white">No service requests found</p>
+          <p id="emptyMsg" class="mt-1 text-sm text-slate-300">Create the first request, or adjust filters.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Kanban -->
+    <section id="kanbanView"
+      class="hidden rounded-3xl border border-slate-900 bg-slate-900/70 p-6 shadow-xl shadow-blue-900/30">
+      <div class="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div class="flex items-center justify-between">
+          <p class="text-sm font-bold text-white">Kanban</p>
+          <p class="text-xs text-slate-400 lg:hidden">Uses your status values.</p>
+        </div>
+
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
+          <div class="flex flex-wrap items-center gap-2 rounded-2xl border border-slate-800 bg-slate-950/40 p-2">
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">Date</span>
+              <select id="kbDateField"
+                class="rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2 text-xs text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-600">
+                <option value="auto">Auto</option>
+                <option value="request">Request date</option>
+                <option value="work">Work date</option>
+                <option value="shipping">Shipping date</option>
+              </select>
+            </div>
+
+            <div class="h-6 w-px bg-slate-800 hidden sm:block"></div>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <button data-kb-range="today"
+                class="kbRangeBtn rounded-full border border-slate-800 bg-slate-950/30 px-3 py-1 text-xs font-bold text-slate-200 hover:bg-slate-800/60">Today</button>
+              <button data-kb-range="7d"
+                class="kbRangeBtn rounded-full border border-slate-800 bg-slate-950/30 px-3 py-1 text-xs font-bold text-slate-200 hover:bg-slate-800/60">7d</button>
+              <button data-kb-range="30d"
+                class="kbRangeBtn rounded-full border border-slate-800 bg-slate-950/30 px-3 py-1 text-xs font-bold text-slate-200 hover:bg-slate-800/60">30d</button>
+              <button data-kb-range="90d"
+                class="kbRangeBtn rounded-full border border-slate-800 bg-slate-950/30 px-3 py-1 text-xs font-bold text-slate-200 hover:bg-slate-800/60">90d</button>
+              <button data-kb-range="thisMonth"
+                class="kbRangeBtn rounded-full border border-slate-800 bg-slate-950/30 px-3 py-1 text-xs font-bold text-slate-200 hover:bg-slate-800/60">This
+                month</button>
+              <button data-kb-range="all"
+                class="kbRangeBtn rounded-full border border-slate-800 bg-slate-950/30 px-3 py-1 text-xs font-bold text-slate-200 hover:bg-slate-800/60">All</button>
+              <button data-kb-range="custom"
+                class="kbRangeBtn rounded-full border border-slate-800 bg-slate-950/30 px-3 py-1 text-xs font-bold text-slate-200 hover:bg-slate-800/60">Custom</button>
+            </div>
+
+            <div id="kbCustomWrap"
+              class="hidden w-full flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end sm:w-auto">
+              <div class="flex items-center gap-2">
+                <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">From</span>
+                <input id="kbFrom" type="date"
+                  class="rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2 text-xs text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-600" />
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">To</span>
+                <input id="kbTo" type="date"
+                  class="rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2 text-xs text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-600" />
+              </div>
+            </div>
+          </div>
+
+          <p id="kbMeta" class="text-xs text-slate-400">—</p>
+        </div>
+      </div>
+
+      <div class="grid gap-4 md:grid-cols-3" id="kanbanColumns"></div>
+    </section>
+
+    <!-- Calendar -->
+    <section id="calendarView"
+      class="hidden rounded-3xl border border-slate-900 bg-slate-900/70 p-6 shadow-xl shadow-blue-900/30">
+      <div class="space-y-3">
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div class="space-y-1">
+            <p class="text-sm font-bold text-white">Calendar</p>
+            <p class="text-sm text-slate-300">Request, work, or shipping dates summarized for quick planning.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="calendarPrevBtn" type="button"
+              class="rounded-xl border border-slate-700 px-3 py-2 text-xs text-slate-200 hover:bg-slate-800/60"
+              title="Previous month">
+              ←
+            </button>
+            <button id="calendarTodayBtn" type="button"
+              class="rounded-xl border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-200 hover:bg-slate-800/60">
+              Today
+            </button>
+            <button id="calendarNextBtn" type="button"
+              class="rounded-xl border border-slate-700 px-3 py-2 text-xs text-slate-200 hover:bg-slate-800/60"
+              title="Next month">
+              →
+            </button>
+          </div>
+        </div>
+        <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+          <p id="calendarMonthLabel" class="text-sm font-semibold text-slate-200">—</p>
+          <p id="calendarMeta" class="text-xs text-slate-400">—</p>
+        </div>
+        <div id="calendarList" class="space-y-3"></div>
+      </div>
+    </section>
+
+    <!-- Gantt -->
+    <section id="ganttView"
+      class="hidden rounded-3xl border border-slate-900 bg-slate-900/70 p-6 shadow-xl shadow-blue-900/30">
+      <div class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div class="space-y-1">
+          <p class="text-sm font-bold text-white">Gantt</p>
+          <p class="text-sm text-slate-300">Timeline from Request → (Shipping/Work/Request). Uses current filters
+            (including status chips + column filters).</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">Scale</span>
+          <select id="ganttScale"
+            class="rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2 text-xs text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-600">
+            <option value="day">Day</option>
+            <option value="week" selected>Week</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="ganttMeta" class="text-xs text-slate-400 mb-3">—</div>
+
+      <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-950/40 p-4">
+        <div id="ganttHeader" class="min-w-[980px] flex items-center justify-between text-[11px] text-slate-400 mb-3">
+        </div>
+        <div id="ganttList" class="min-w-[980px] space-y-3"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal -->
+  <div id="modalOverlay" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 p-4">
+    <!-- NOTE: max-w-5xl + compact paddings to fit on one screen -->
+    <div class="w-full max-w-5xl rounded-3xl border border-slate-800 bg-slate-950 shadow-2xl overflow-hidden">
+      <div class="flex items-center justify-between border-b border-slate-800 px-5 py-4">
+        <div>
+          <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-blue-200">Service request</p>
+          <h3 id="modalTitle" class="text-base font-black text-white">New request</h3>
+          <p class="text-xs text-slate-400 mt-0.5">Pick a VIN to auto-fill vehicle details. POC is the client contact.
+          </p>
+        </div>
+        <button id="modalClose"
+          class="rounded-2xl border border-slate-800 bg-slate-900/60 p-2 text-slate-200 hover:bg-slate-800">
+          <i data-lucide="x" class="h-5 w-5"></i>
+        </button>
+      </div>
+
+      <form id="requestForm" class="space-y-4 px-5 py-4">
+        <input type="hidden" id="requestId" />
+
+        <!-- Compact grid (12 cols) -->
+        <div class="grid grid-cols-12 gap-3">
+
+          <!-- Vehicle (VIN search + auto-fill) -->
+          <div class="col-span-12">
+            <p class="text-[11px] font-black uppercase tracking-[0.16em] text-slate-400">Vehicle</p>
+          </div>
+
+          <label class="col-span-12 md:col-span-4 space-y-1 relative">
+            <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">Short VIN</span>
+            <input id="shortVinInput" autocomplete="off"
+              class="w-full rounded-2xl border border-slate-800 bg-slate-900/50 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-600"
+              placeholder="Search VIN..." />
+            <div id="vinMenu"
+              class="combo-menu hidden absolute left-0 right-0 mt-2 max-h-56 overflow-auto rounded-2xl border border-slate-800 bg-slate-950 shadow-2xl z-50">
+            </div>
+            <p id="vinHint" class="text-[11px] text-slate-500">Type to search. Select a VIN to fill
+              Brand/Model/Year/Unit type.</p>
+          </label>
+
+          <label class="col-span-6 md:col-span-2 space-y-1">
+            <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">Unit Type</span>
+            <input id="unitTypeInput"
+              class="w-full rounded-2xl border border-slate-800 bg-slate-900/50 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-600" />
+          </label>
+
+          <label class="col-span-6 md:col-span-2 space-y-1">
+            <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">Brand</span>
+            <input id="brandInput"
+              class="w-full rounded-2xl border border-slate-800 bg-slate-900/50 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-600" />
+          </label>
+
+          <label class="col-span-6 md:col-span-2 space-y-1">
+            <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">Model</span>
+            <input id="modelInput"
+              class="w-full rounded-2xl border border-slate-800 bg-slate-900/50 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-600" />
+          </label>
+
+          <label class="col-span-6 md:col-span-2 space-y-1">
+            <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">Model Year</span>
+            <input id="modelYearInput" type="number"
+              class="w-full rounded-2xl border border-slate-800 bg-slate-900/50 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-600" />
+          </label>
+
+          <!-- Request details -->
+          <div class="col-span-12 mt-1">
+            <p class="text-[11px] font-black uppercase tracking-[0.16em] text-slate-400">Request details</p>
+          </div>
+
+          <label class="col-span-12 md:col-span-4 space-y-1">
+            <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">Company Name</span>
+            <input id="companyNameInput"
+              class="w-full rounded-2xl border border-slate-800 bg-slate-900/50 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-600" />
+          </label>
+
+          <label class="col-span-12 md:col-span-4 space-y-1">
+            <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">Company Phone</span>
+            <input id="companyPhoneInput"
+              class="w-full rounded-2xl border border-slate-800 bg-slate-900/50 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-600" />
+          </label>
+
+          <label class="col-span-6 md:col-span-2 space-y-1">
+            <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">Status</span>
+            <select id="statusInput"
+              class="w-full rounded-2xl border border-slate-800 bg-slate-900/50 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-600">
+              <option value="Open">Open</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Waiting">Waiting</option>
+              <option value="Closed">Closed</option>
+            </select>
+          </label>
+
+          <label class="col-span-6 md:col-span-2 space-y-1">
+            <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">Quote</span>
+            <input id="quoteInput"
+              class="w-full rounded-2xl border border-slate-800 bg-slate-900/50 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-600"
+              placeholder="e.g. 1200" />
+          </label>
+
+          <label class="col-span-12 md:col-span-4 space-y-1">
+            <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">Service Category</span>
+            <select id="categoryInput"
+              class="w-full rounded-2xl border border-slate-800 bg-slate-900/50 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-600">
+              <option value="">Loading…</option>
+            </select>
+          </label>
+
+          <label class="col-span-12 md:col-span-4 space-y-1">
+            <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">Doc</span>
+            <input id="docInput"
+              class="w-full rounded-2xl border border-slate-800 bg-slate-900/50 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-600" />
+          </label>
+
+          <label class="col-span-4 md:col-span-2 space-y-1">
+            <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">Request Date</span>
+            <input id="requestDateInput" type="date"
+              class="w-full rounded-2xl border border-slate-800 bg-slate-900/50 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-600" />
+          </label>
+
+          <label class="col-span-4 md:col-span-2 space-y-1">
+            <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">Work Date</span>
+            <input id="workDateInput" type="date"
+              class="w-full rounded-2xl border border-slate-800 bg-slate-900/50 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-600" />
+          </label>
+
+          <label class="col-span-4 md:col-span-2 space-y-1">
+            <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">Shipping Date</span>
+            <input id="shippingDateInput" type="date"
+              class="w-full rounded-2xl border border-slate-800 bg-slate-900/50 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-600" />
+          </label>
+
+          <!-- Client Contact (POC) -->
+          <div class="col-span-12 mt-1">
+            <p class="text-[11px] font-black uppercase tracking-[0.16em] text-slate-400">Client contact</p>
+          </div>
+
+          <label class="col-span-12 md:col-span-4 space-y-1">
+            <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">POC Name</span>
+            <input id="pocNameInput"
+              class="w-full rounded-2xl border border-slate-800 bg-slate-900/50 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-600" />
+          </label>
+
+          <label class="col-span-12 md:col-span-4 space-y-1">
+            <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">POC Phone</span>
+            <input id="pocPhoneInput"
+              class="w-full rounded-2xl border border-slate-800 bg-slate-900/50 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-600" />
+          </label>
+
+          <label class="col-span-12 md:col-span-4 space-y-1">
+            <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">Confirmed</span>
+            <select id="confirmedInput"
+              class="w-full rounded-2xl border border-slate-800 bg-slate-900/50 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-600">
+              <option value="">Pending</option>
+              <option value="true">Yes</option>
+              <option value="false">No</option>
+            </select>
+          </label>
+
+          <!-- Service Destination -->
+          <div class="col-span-12 mt-1">
+            <p class="text-[11px] font-black uppercase tracking-[0.16em] text-slate-400">Service destination</p>
+          </div>
+
+          <label class="col-span-6 md:col-span-2 space-y-1">
+            <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">State</span>
+            <input id="stateInput"
+              class="w-full rounded-2xl border border-slate-800 bg-slate-900/50 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-600" />
+          </label>
+
+          <label class="col-span-6 md:col-span-3 space-y-1">
+            <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">City</span>
+            <input id="cityInput"
+              class="w-full rounded-2xl border border-slate-800 bg-slate-900/50 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-600" />
+          </label>
+
+          <label class="col-span-6 md:col-span-2 space-y-1">
+            <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">ZIP</span>
+            <input id="zipInput"
+              class="w-full rounded-2xl border border-slate-800 bg-slate-900/50 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-600" />
+          </label>
+
+          <label class="col-span-12 md:col-span-5 space-y-1">
+            <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">Address</span>
+            <input id="addressInput"
+              class="w-full rounded-2xl border border-slate-800 bg-slate-900/50 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-600"
+              placeholder="Destination where service will be provided" />
+          </label>
+
+        </div>
+
+        <div class="flex items-center justify-between pt-2 border-t border-slate-800">
+          <p id="formError" class="text-sm text-red-300"></p>
+          <div class="flex items-center gap-2">
+            <button type="button" id="deleteBtn"
+              class="hidden rounded-2xl border border-red-800 bg-red-950/40 px-4 py-2 text-sm font-black text-red-200 hover:bg-red-950/70">Delete</button>
+            <button type="submit"
+              class="rounded-2xl bg-blue-600 px-5 py-2 text-sm font-black text-white hover:bg-blue-500">Save</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</body>
+
+</html>
