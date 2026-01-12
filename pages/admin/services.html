@@ -7,27 +7,7 @@
   <title>TechLoc • Services Admin</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- Minimal analytics -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-
-  <script type="module" src="../../assets/js/supabaseClient.js"></script>
-  <script type="module" src="../../assets/scripts/authManager.js"></script>
-  <script type="module" src="../../assets/scripts/admin-auth.js"></script>
-
-  <script type="module">
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
-          colors: { slate: { 950: '#020617' } },
-        },
-      },
-    };
-  </script>
 
   <link rel="stylesheet" href="../../assets/visuals/theme.css" />
 
@@ -411,35 +391,17 @@
 <body class="min-h-screen bg-slate-950 text-slate-50 relative">
 
   <!-- HEADER -->
-  <div id="header-root"></div>
+  <div id="admin-header-root"></div>
   <script type="module">
     import { renderHeader } from '../../assets/components/Header.js';
+    import { renderAdminHeader } from '../../assets/components/AdminHeader.js';
     renderHeader('header-root');
+    renderAdminHeader('admin-header-root');
   </script>
-
-  <nav class="border-b border-slate-800 bg-slate-900/70 backdrop-blur">
-    <div class="ml-auto mr-0 flex max-w-[1400px] flex-wrap items-center justify-between gap-2 px-6 py-3 lg:px-10">
-      <span class="text-[11px] font-semibold uppercase tracking-[0.18em] text-blue-200">Admin navigation</span>
-      <div class="flex flex-wrap items-center gap-1">
-        <a href="index.html"
-          class="rounded-lg border border-slate-800/60 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:bg-slate-800 hover:text-white">Dashboard</a>
-        <a href="profiles.html" data-admin-only
-          class="rounded-lg border border-slate-800/60 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:bg-slate-800 hover:text-white">Profiles</a>
-        <a href="services.html"
-          class="rounded-lg border border-blue-500 bg-blue-600/90 px-4 py-2 text-xs font-semibold text-white shadow shadow-blue-500/30 transition">Services</a>
-        <a href="titles.html"
-          class="rounded-lg border border-slate-800/60 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:bg-slate-800 hover:text-white">Titles</a>
-        <a href="vehicles.html"
-          class="rounded-lg border border-slate-800/60 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:bg-slate-800 hover:text-white">Vehicles</a>
-        <a href="analytics.html"
-          class="rounded-lg border border-slate-800/60 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:bg-slate-800 hover:text-white">Analytics</a>
-      </div>
-    </div>
-  </nav>
 
   <canvas id="constellation-canvas" class="pointer-events-none fixed inset-0 -z-10"></canvas>
 
-  <main class="ml-auto mr-0 w-full max-w-[1400px] px-6 py-5 lg:px-10 space-y-5">
+  <main class="mx-auto w-full max-w-[1400px] px-6 py-5 lg:px-10 space-y-5">
     <section class="flex min-w-0 flex-col gap-4">
       <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>

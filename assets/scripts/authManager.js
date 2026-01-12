@@ -10,6 +10,14 @@ class AuthUIManager {
       control: 'nav-control-view'
     };
 
+    this.prefix = './';
+    const currentPath = window.location.pathname;
+    if (currentPath.includes('/pages/admin/')) {
+      this.prefix = '../../';
+    } else if (currentPath.includes('/pages/')) {
+      this.prefix = '../';
+    }
+
     // Listen for header rendering
     window.addEventListener('header:rendered', () => {
       this.init();
@@ -65,9 +73,39 @@ class AuthUIManager {
     const dashboardBtn = document.getElementById(this.navIds.dashboard);
     const servicesBtn = document.getElementById(this.navIds.services);
 
-    // Toggle Login/Logout
-    if (loginBtn) loginBtn.classList.toggle('hidden', isLoggedIn);
-    if (logoutBtn) logoutBtn.classList.toggle('hidden', !isLoggedIn);
+    // Toggle Login/Logout visibility AND text
+    if (loginBtn) {
+      if (isLoggedIn) {
+        loginBtn.classList.add('hidden');
+      } else {
+        loginBtn.classList.remove('hidden');
+        loginBtn.textContent = 'Login';
+        loginBtn.href = `${this.prefix}pages/login.html`;
+      }
+    }
+
+    if (logoutBtn) {
+      if (isLoggedIn) {
+        logoutBtn.classList.remove('hidden');
+        logoutBtn.textContent = 'Logout';
+      } else {
+        logoutBtn.classList.add('hidden');
+      }
+    }
+
+    // Hero buttons (index.html)
+    const heroLoginBtn = document.getElementById('hero-login-btn');
+    const heroDashboardBtn = document.getElementById('hero-dashboard-btn');
+    if (heroLoginBtn) {
+      heroLoginBtn.classList.toggle('hidden', isLoggedIn);
+      if (!isLoggedIn) {
+        const icon = heroLoginBtn.querySelector('i');
+        heroLoginBtn.innerHTML = '';
+        if (icon) heroLoginBtn.appendChild(icon);
+        heroLoginBtn.appendChild(document.createTextNode(' Log in'));
+      }
+    }
+    if (heroDashboardBtn) heroDashboardBtn.classList.toggle('hidden', !isLoggedIn);
 
     // Role-based UI
     if (isLoggedIn && session.user) {

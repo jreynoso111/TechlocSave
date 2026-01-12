@@ -9,31 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
     rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
-          animation: {
-            'glow': 'glow 8s ease-in-out infinite',
-            'bounce-subtle': 'bounce-subtle 2s ease-in-out infinite',
-          },
-          keyframes: {
-            glow: {
-              '0%, 100%': { opacity: 0.3, transform: 'scale(1)' },
-              '50%': { opacity: 0.6, transform: 'scale(1.2)' },
-            },
-            'bounce-subtle': {
-              '0%, 100%': { transform: 'translateY(0)' },
-              '50%': { transform: 'translateY(-5px)' },
-            }
-          }
-        },
-      },
-    };
-  </script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <script type="module" src="assets/scripts/authManager.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script type="module" src="assets/scripts/datasets.js"></script>
@@ -106,11 +82,7 @@
           <i data-lucide="layout-dashboard" class="h-4 w-4"></i>
           Access Dashboard
         </a>
-        <a href="#modules"
-          class="inline-flex items-center gap-2 rounded-full bg-transparent px-8 py-4 text-sm font-bold text-slate-400 transition-all hover:text-white">
-          Explore Modules
-          <i data-lucide="arrow-down" class="h-4 w-4 animate-bounce-subtle"></i>
-        </a>
+
       </div>
     </div>
 

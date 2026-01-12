@@ -39,7 +39,7 @@ export function renderHeader(containerId) {
 
   container.innerHTML = `
   <header class="border-b border-slate-800 bg-slate-950/90 backdrop-blur z-50 sticky top-0">
-    <div class="mx-auto relative max-w-7xl px-6 py-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-6">
+    <div class="ml-auto mr-0 relative max-w-7xl px-6 py-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-6">
 
       <div class="flex items-center justify-between gap-4 md:flex-none">
         <a href="${prefix}index.html" class="flex items-center gap-3">

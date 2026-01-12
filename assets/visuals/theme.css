@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* Global darker tone for TechLoc pages */
 :root {
   --page-bg: #030712;
