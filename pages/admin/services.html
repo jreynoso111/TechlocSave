@@ -556,8 +556,8 @@
     import { supabase as supabaseClient } from '../../assets/js/supabaseClient.js';
     import { logAdminEvent } from '../../assets/scripts/adminAudit.js';
 
-    const READ_TABLE = 'services';
-    const WRITE_TABLE = 'services';
+    const READ_TABLE = 'Services';
+    const WRITE_TABLE = 'Services';
     const CHANGE_LOG_TABLE = 'admin_change_log';
     const PAGE_CATEGORY = 'GPS Technician';
 
@@ -606,6 +606,9 @@
       website: getField(row, 'website', 'Website'),
       availability: getField(row, 'availability', 'Availability'),
       verified: normalizeVerified(getField(row, 'Verified', 'verified', 'is_verified', 'Is Verified')),
+      region: getField(row, 'region', 'Region'),
+      status: getField(row, 'status', 'Status'),
+      type: getField(row, 'type', 'Type'),
       lat: getField(row, 'lat', 'latitude', 'Lat'),
       long: getField(row, 'long', 'lng', 'longitude', 'Lon'),
     });
@@ -626,6 +629,9 @@
       notes: 'notes',
       website: 'website',
       availability: 'availability',
+      region: 'region',
+      status: 'status',
+      type: 'type',
       lat: 'lat',
       long: 'long',
     };
@@ -670,6 +676,9 @@
       { id: 'notes', label: 'Notes', key: 'notes', defaultWidth: 260 },
       { id: 'website', label: 'Website', key: 'website', defaultWidth: 220 },
       { id: 'availability', label: 'Availability', key: 'availability', defaultWidth: 180 },
+      { id: 'region', label: 'Region', key: 'region', defaultWidth: 150 },
+      { id: 'status', label: 'Status', key: 'status', defaultWidth: 120 },
+      { id: 'type', label: 'Type', key: 'type', defaultWidth: 120 },
       { id: 'lat', label: 'Lat', key: 'lat', defaultWidth: 120 },
       { id: 'long', label: 'Long', key: 'long', defaultWidth: 120 },
     ];

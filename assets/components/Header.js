@@ -66,7 +66,7 @@ export function renderHeader(containerId, options = {}) {
           <a id="nav-control-view" href="${prefix}pages/vehicles.html" class="rounded-full px-3 py-1 transition-colors hover:text-white hover:bg-slate-800">Control Map</a>
           <a id="nav-inventory-control" href="${prefix}pages/inventory-control.html" class="rounded-full px-3 py-1 transition-colors hover:text-white hover:bg-slate-800">Inventory</a>
           <a id="nav-services" href="${prefix}pages/admin/services.html" class="rounded-full px-3 py-1 transition-colors hover:text-white hover:bg-slate-800">Services</a>
-          <a id="nav-dashboard" href="${prefix}pages/admin/index.html" data-dashboard-link class="hidden rounded-full px-3 py-1 transition-colors hover:text-white hover:bg-slate-800 md:inline-flex">Dashboard</a>
+          <a id="nav-dashboard" href="${prefix}pages/admin/index.html" data-dashboard-link class="hidden rounded-full px-3 py-1 transition-colors hover:text-white hover:bg-slate-800">Dashboard</a>
           <a id="nav-contact" href="${prefix}pages/contact.html" class="rounded-full px-3 py-1 transition-colors hover:text-white hover:bg-slate-800">Contact</a>
         </nav>
 

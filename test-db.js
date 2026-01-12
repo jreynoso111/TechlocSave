@@ -5,30 +5,45 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-async function testConnection() {
-    console.log('Testing connection to Supabase...');
-    const { data, error } = await supabase.from('services').select('*').limit(5);
+async function inspect(table) {
+    console.log(`Inspecting ${table}...`);
+    const { data, error } = await supabase.from(table).select('*').limit(1);
 
     if (error) {
-        console.error('Profiles Query Error:', error.message);
+        console.log(`Failed to load ${table}: ${error.message}`);
     } else {
-        console.log('Profiles Data:', data);
-    }
-
-    console.log('Testing Authentication...');
-    const email = 'jreynoso111@gmail.com';
-    const password = 'Reyper09';
-
-    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email,
-        password
-    });
-
-    if (authError) {
-        console.error('Auth Error:', authError.message);
-    } else {
-        console.log('Auth Successful! User:', authData.user.email);
+        if (data && data.length > 0) {
+            console.log(`${table} keys:`, Object.keys(data[0]));
+        } else {
+            console.log(`${table} is empty.`);
+        }
     }
 }
 
-testConnection();
+async function run() {
+    await inspect('Services'); // Capitalized
+    await inspect('services'); // Lowercase
+    await inspect('Titles');
+
+    console.log('Attempting to insert dummy record into Titles...');
+    const { data, error } = await supabase
+        .from('Titles')
+        .insert([
+            {
+                "VIN": "TEST123456789",
+                "Sheet": "Test Sheet",
+                "Unit Type": "Truck",
+                "Location": "Test Location",
+                "Lien Status": "Pending"
+            }
+        ])
+        .select();
+
+    if (error) {
+        console.error('Insert error:', error);
+    } else {
+        console.log('Insert success:', data);
+    }
+}
+
+run();

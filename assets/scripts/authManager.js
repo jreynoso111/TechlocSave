@@ -95,6 +95,8 @@ class AuthUIManager {
       }
     }
 
+    const inventoryBtn = document.getElementById(this.navIds.inventory);
+
     // Protected Navigation Items
     const protectedBtns = [servicesBtn, inventoryBtn, controlBtn];
     protectedBtns.forEach(btn => {
@@ -125,10 +127,17 @@ class AuthUIManager {
 
       if (dashboardBtn) {
         dashboardBtn.classList.toggle('hidden', !isAdmin || isSuspended);
-        if (isAdmin && !isSuspended) dashboardBtn.classList.add('md:inline-flex');
+        if (isAdmin && !isSuspended) {
+          dashboardBtn.classList.add('md:inline-flex');
+        } else {
+          dashboardBtn.classList.remove('md:inline-flex');
+        }
       }
     } else {
-      if (dashboardBtn) dashboardBtn.classList.add('hidden');
+      if (dashboardBtn) {
+        dashboardBtn.classList.add('hidden');
+        dashboardBtn.classList.remove('md:inline-flex');
+      }
     }
 
     // Dispatch event for other components if needed
