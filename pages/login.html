@@ -69,11 +69,6 @@
           class="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 px-4 py-3 text-sm font-semibold uppercase tracking-wide text-white shadow-lg shadow-blue-600/40 transition hover:-translate-y-0.5">
           <span>Login</span>
         </button>
-        <div class="text-center">
-          <button type="button" id="toggle-auth-mode" class="text-xs font-semibold text-blue-400 hover:text-blue-300">
-            Don't have an account? Sign up
-          </button>
-        </div>
       </form>
 
       <div id="status" class="mt-4 rounded-xl border border-transparent p-3 text-sm text-slate-400">
@@ -104,47 +99,22 @@
       }
     }
 
-    const toggleAuthMode = document.getElementById('toggle-auth-mode');
-    let isLoginMode = true;
-
-    toggleAuthMode.addEventListener('click', () => {
-      isLoginMode = !isLoginMode;
-      submitLabel.textContent = isLoginMode ? 'Login' : 'Sign Up';
-      toggleAuthMode.textContent = isLoginMode ? "Don't have an account? Sign up" : "Already have an account? Login";
-      document.querySelector('h1').textContent = isLoginMode ? 'Secure Login' : 'Create Admin Account';
-      document.querySelector('h2').textContent = isLoginMode ? 'Access your dashboard' : 'Join the TechLoc system';
-    });
-
     loginForm.addEventListener('submit', async (event) => {
       event.preventDefault();
 
       submitButton.disabled = true;
       const originalText = submitLabel.textContent;
-      submitLabel.textContent = isLoginMode ? 'Verifying...' : 'Creating Account...';
-      updateStatus(isLoginMode ? 'Connecting to secure services...' : 'Creating your administrator account...');
+      submitLabel.textContent = 'Verifying...';
+      updateStatus('Connecting to secure services...');
 
       const email = emailInput.value.trim();
       const password = passwordInput.value;
 
       try {
-        let authResult;
-        if (isLoginMode) {
-          authResult = await supabaseClient.auth.signInWithPassword({ email, password });
-        } else {
-          authResult = await supabaseClient.auth.signUp({ email, password });
-        }
-
-        const { data, error } = authResult;
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
         if (error) {
           updateStatus(error.message, true);
-          submitButton.disabled = false;
-          submitLabel.textContent = originalText;
-          return;
-        }
-
-        if (!isLoginMode && data?.user && !data.session) {
-          updateStatus('Account created! Please check your email for a confirmation link.', false);
           submitButton.disabled = false;
           submitLabel.textContent = originalText;
           return;
@@ -173,16 +143,16 @@
 
         await logAdminEvent({
           client: supabaseClient,
-          action: isLoginMode ? 'login' : 'signup',
+          action: 'login',
           tableName: 'auth',
-          summary: `User ${data?.user?.email || email} ${isLoginMode ? 'signed in' : 'signed up'}`,
+          summary: `User ${data?.user?.email || email} signed in`,
           recordId: data?.user?.id || null,
           actor: data?.user?.email || email,
         });
 
         updateStatus('Redirecting to dashboard...');
 
-        const basePath = window.location.hostname.includes('github.io') ? '/Techloc' : '';
+        const basePath = window.location.hostname.includes('github.io') ? '/TechlocSave' : '';
         window.location.replace(basePath + '/index.html');
       } catch (err) {
         console.error('Auth error:', err);

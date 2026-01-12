@@ -2,15 +2,20 @@ export function renderHeader(containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
 
-  const basePath = import.meta.env.BASE_URL || '/';
-
-  // Determine active state logic or specific styles could go here
-  // For now we use absolute paths for simplicity with Vite
+  // Safe fallback for basePath
+  let basePath = '/';
+  try {
+    if (import.meta.env && import.meta.env.BASE_URL) {
+      basePath = import.meta.env.BASE_URL;
+    }
+  } catch (e) {
+    // Fallback to relative or root if import.meta.env is not defined
+  }
 
   container.innerHTML = `
   <header class="border-b border-slate-800 bg-slate-950/90 backdrop-blur z-50 sticky top-0">
     <div class="mx-auto relative max-w-7xl px-6 py-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-6">
-      
+
       <div class="flex items-center justify-between gap-4 md:flex-none">
         <a href="${basePath}index.html" class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 via-indigo-500 to-blue-700 shadow-lg shadow-blue-500/30">
@@ -23,12 +28,12 @@ export function renderHeader(containerId) {
         </a>
 
         <button id="mobile-menu-toggle" class="inline-flex items-center justify-center rounded-2xl border border-slate-800 bg-slate-900/70 p-2 text-slate-200 transition hover:border-blue-500 hover:text-white md:hidden" aria-label="Toggle navigation" aria-expanded="false">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="18" y2="18" /></svg>
         </button>
       </div>
 
       <div id="primary-nav" class="hidden flex-col gap-3 rounded-2xl border border-slate-800 bg-slate-900/90 p-4 text-sm font-semibold text-slate-200 shadow-lg shadow-blue-900/20 md:mt-0 md:flex md:flex-1 md:flex-row md:items-center md:justify-between md:border-0 md:bg-transparent md:p-0 md:shadow-none">
-        
+
         <nav class="flex flex-col gap-2 md:flex-row md:items-center md:gap-1">
           <a id="nav-home" href="${basePath}index.html" class="rounded-full px-3 py-1 transition-colors hover:text-white hover:bg-slate-800">Home</a>
           <a id="nav-control-view" href="${basePath}pages/vehicles.html" class="hidden rounded-full px-3 py-1 transition-colors hover:text-white hover:bg-slate-800 md:inline-flex">Control Map</a>

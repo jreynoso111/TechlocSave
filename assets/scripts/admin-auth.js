@@ -1,9 +1,10 @@
 import { SUPABASE_KEY, SUPABASE_URL } from './env.js';
 import { supabase as sharedSupabaseClient } from '../js/supabaseClient.js';
 
-const LOGIN_PAGE = new URL('../../pages/login.html', import.meta.url).toString();
-const ADMIN_HOME = new URL('../../pages/admin/index.html', import.meta.url).toString();
-const CONTROL_VIEW = new URL('../../pages/vehicles.html', import.meta.url).toString();
+const LOGIN_PAGE = '/pages/login.html';
+const ADMIN_HOME = '/pages/admin/index.html';
+const CONTROL_VIEW = '/pages/vehicles.html';
+const HOME_PAGE = '/index.html';
 
 
 const supabaseClient =
@@ -11,11 +12,11 @@ const supabaseClient =
   window.supabaseClient ||
   (window.supabase?.createClient && SUPABASE_URL && SUPABASE_KEY
     ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-        auth: {
-          persistSession: true,
-          autoRefreshToken: true,
-        },
-      })
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+      },
+    })
     : null);
 
 if (!supabaseClient) {
@@ -47,7 +48,6 @@ const broadcastRoleStatus = (role, status) =>
     }),
   );
 
-const HOME_PAGE = new URL('../../index.html', import.meta.url).toString();
 
 const redirectToLogin = () => {
   window.location.href = LOGIN_PAGE;
@@ -383,7 +383,6 @@ const enforceAdminGuard = async () => {
   if (routeInfo.isAdminDashboard) {
     window.adminAuthReady = true;
     window.dispatchEvent(new Event('admin:auth-ready'));
-    return session;
   }
 
   revealAuthorizedUi();

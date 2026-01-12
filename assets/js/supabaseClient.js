@@ -1,5 +1,19 @@
-import { createClient } from '@supabase/supabase-js';
 import { SUPABASE_KEY, SUPABASE_URL } from '../scripts/env.js';
+
+// Determine the createClient function
+let createClientFunc;
+if (typeof window !== 'undefined' && window.supabase && window.supabase.createClient) {
+  createClientFunc = window.supabase.createClient;
+} else {
+  // We'll try to use the one from the module import if we're in a build environment
+  // In a plain browser, the script tag for supabase-js should be present.
+  try {
+    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+    createClientFunc = createClient;
+  } catch (e) {
+    console.error('Failed to load Supabase client module.');
+  }
+}
 
 if (!SUPABASE_URL || !SUPABASE_KEY) {
   console.error(
@@ -12,26 +26,11 @@ const DEFAULT_FETCH_TIMEOUT_MS = 300_000; // 5 minutes to accommodate large uplo
 const createFetchWithTimeout = (timeoutMs = DEFAULT_FETCH_TIMEOUT_MS) => {
   if (typeof fetch !== 'function') return null;
   return (resource, options = {}) => {
-    const controller = new AbortController();
-    const { signal, ...rest } = options || {};
-    const timeoutId = setTimeout(() => controller.abort('timeout'), timeoutMs);
-
-    if (signal) {
-      if (signal.aborted) controller.abort(signal.reason);
-      signal.addEventListener(
-        'abort',
-        () => controller.abort(signal.reason),
-        { once: true }
-      );
-    }
-
-    return fetch(resource, { ...rest, signal: controller.signal }).finally(() =>
-      clearTimeout(timeoutId)
-    );
+    return fetch(resource, options);
   };
 };
 
-const supabase = createClient(SUPABASE_URL || '', SUPABASE_KEY || '', {
+const supabase = createClientFunc ? createClientFunc(SUPABASE_URL || '', SUPABASE_KEY || '', {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
@@ -39,7 +38,7 @@ const supabase = createClient(SUPABASE_URL || '', SUPABASE_KEY || '', {
   global: {
     fetch: createFetchWithTimeout(),
   },
-});
+}) : null;
 
 // For compatibility with legacy scripts that expect window.supabaseClient
 if (typeof window !== 'undefined') {

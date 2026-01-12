@@ -27,18 +27,23 @@ const loadProfileMode = async () => {
   const userId = await getCurrentUserId();
   if (!userId) return null;
 
+  // Defensive select in case column doesn't exist
   const { data, error } = await supabaseClient
     .from('profiles')
-    .select('background_mode')
+    .select('*')
     .eq('id', userId)
     .maybeSingle();
 
   if (error) {
+    if (error.code === 'PGRST204' || error.message?.includes('background_mode')) {
+      console.warn('Profile background_mode column missing in Supabase schema.');
+      return null;
+    }
     console.warn('Unable to fetch background preference from profile', error);
     return null;
   }
 
-  return data?.background_mode ? normalizeBackgroundMode(data.background_mode) : null;
+  return data && 'background_mode' in data ? normalizeBackgroundMode(data.background_mode) : null;
 };
 
 const saveProfileMode = async (mode) => {
@@ -47,13 +52,21 @@ const saveProfileMode = async (mode) => {
   if (!userId) return;
 
   const normalized = normalizeBackgroundMode(mode);
-  const { error } = await supabaseClient
-    .from('profiles')
-    .update({ background_mode: normalized })
-    .eq('id', userId);
+  try {
+    const { error } = await supabaseClient
+      .from('profiles')
+      .update({ background_mode: normalized })
+      .eq('id', userId);
 
-  if (error) {
-    throw error;
+    if (error) {
+      if (error.code === 'PGRST204' || error.message?.includes('background_mode')) {
+        console.warn('Cannot save background_mode: column missing in Supabase.');
+        return;
+      }
+      throw error;
+    }
+  } catch (err) {
+    console.warn('Failed to save background preference:', err);
   }
 };
 
