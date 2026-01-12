@@ -1,6 +1,6 @@
 export const createConstellationBackground = (canvasId = 'constellation-canvas') => {
   const canvas = document.getElementById(canvasId);
-  if (!canvas) return { cleanup: () => {} };
+  if (!canvas) return { cleanup: () => { } };
 
   const ctx = canvas.getContext('2d');
   const particles = [];
@@ -22,9 +22,9 @@ export const createConstellationBackground = (canvasId = 'constellation-canvas')
         y: Math.random() * height,
         vx: (Math.random() - 0.5) * 0.35,
         vy: (Math.random() - 0.5) * 0.35,
-        r: Math.random() * 1.8 + 0.7,
-        alpha: Math.random() * 0.5 + 0.2,
-        targetAlpha: Math.random() * 0.6 + 0.2,
+        r: Math.random() * 2.2 + 1.0,  // Increased size
+        alpha: Math.random() * 0.6 + 0.4, // Increased alpha
+        targetAlpha: Math.random() * 0.7 + 0.4,
         pulse: Math.random() * Math.PI * 2,
       });
     }
@@ -44,7 +44,7 @@ export const createConstellationBackground = (canvasId = 'constellation-canvas')
       if (p.y > height + 20) p.y = -20;
 
       if (Math.random() < 0.005) {
-        p.targetAlpha = Math.random() * 0.6 + 0.2;
+        p.targetAlpha = Math.random() * 0.7 + 0.4;
       }
 
       p.alpha += (p.targetAlpha - p.alpha) * fadeSpeed * 50;
@@ -56,11 +56,19 @@ export const createConstellationBackground = (canvasId = 'constellation-canvas')
 
     for (let i = 0; i < particles.length; i += 1) {
       const p = particles[i];
-      const flicker = 0.35 + 0.65 * Math.sin(p.pulse);
+      const flicker = 0.5 + 0.5 * Math.sin(p.pulse); // Brighter flicker base
       ctx.beginPath();
-      ctx.fillStyle = `rgba(99, 102, 241, ${p.alpha * flicker})`;
+
+      // Add glow effect
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = 'rgba(99, 102, 241, 0.8)';
+
+      ctx.fillStyle = `rgba(165, 180, 252, ${p.alpha * flicker})`; // Brighter indigo/blue
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
       ctx.fill();
+
+      // Reset shadow for lines
+      ctx.shadowBlur = 0;
 
       for (let j = i + 1; j < particles.length; j += 1) {
         const q = particles[j];
@@ -70,8 +78,8 @@ export const createConstellationBackground = (canvasId = 'constellation-canvas')
 
         const maxDist = 180;
         if (dist < maxDist) {
-          const lineAlpha = ((1 - dist / maxDist) ** 2) * 0.35 * (0.35 + 0.65 * Math.sin((p.pulse + q.pulse) * 0.5));
-          ctx.strokeStyle = `rgba(56, 189, 248, ${lineAlpha})`;
+          const lineAlpha = ((1 - dist / maxDist) ** 2) * 0.5 * (0.4 + 0.6 * Math.sin((p.pulse + q.pulse) * 0.5));
+          ctx.strokeStyle = `rgba(125, 211, 252, ${lineAlpha})`; // Brighter sky blue
           ctx.lineWidth = 1;
           ctx.beginPath();
           ctx.moveTo(p.x, p.y);
