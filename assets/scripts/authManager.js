@@ -7,10 +7,15 @@ class AuthUIManager {
       logout: 'nav-logout',
       dashboard: 'nav-dashboard',
       services: 'nav-services',
-      control: 'nav-control-view' // Added control view
+      control: 'nav-control-view'
     };
 
-    // We wait for DOM content loaded inside init if not ready
+    // Listen for header rendering
+    window.addEventListener('header:rendered', () => {
+      this.init();
+    });
+
+    // Also init on load just in case header was already there
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => this.init());
     } else {
@@ -25,18 +30,27 @@ class AuthUIManager {
 
   setupListeners() {
     const logoutBtn = document.getElementById(this.navIds.logout);
-    if (logoutBtn) {
+    if (logoutBtn && !logoutBtn.dataset.listenerAttached) {
       logoutBtn.addEventListener('click', async (e) => {
         e.preventDefault();
+        const originalText = logoutBtn.textContent;
         logoutBtn.textContent = '...';
-        await AuthService.logout();
+        try {
+          await AuthService.logout();
+        } catch (err) {
+          console.error('Logout failed:', err);
+          logoutBtn.textContent = originalText;
+        }
       });
+      logoutBtn.dataset.listenerAttached = 'true';
     }
 
     // Listen for global auth state changes
-    AuthService.onAuthStateChange(async (event, session) => {
-      this.updateUI(session);
-    });
+    if (!this.stateChangeUnsubscribe) {
+      this.stateChangeUnsubscribe = AuthService.onAuthStateChange(async (event, session) => {
+        this.updateUI(session);
+      });
+    }
   }
 
   async checkAuth() {

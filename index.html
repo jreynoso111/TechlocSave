@@ -42,10 +42,12 @@
     .module-card {
       transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
+
     .module-card:hover {
       transform: translateY(-8px) scale(1.02);
       box-shadow: 0 20px 40px -10px rgba(59, 130, 246, 0.3);
     }
+
     .hero-gradient {
       background: radial-gradient(circle at top center, rgba(37, 99, 235, 0.15) 0%, transparent 70%);
     }
@@ -65,25 +67,28 @@
     renderHeader('header-root');
   </script>
 
-  <main class="relative z-10 mx-auto max-w-7xl px-6 py-12 md:py-24">
-    
+  <main class="relative z-10 ml-auto mr-0 max-w-[1400px] px-6 py-12 md:py-24">
+
     <!-- Hero Section -->
     <div class="hero-gradient mb-20 text-center">
       <div class="mb-8 flex justify-center">
-        <div class="group relative flex h-24 w-24 items-center justify-center rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl transition-all duration-500 hover:border-blue-500">
+        <div
+          class="group relative flex h-24 w-24 items-center justify-center rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl transition-all duration-500 hover:border-blue-500">
           <div class="absolute inset-0 animate-glow rounded-3xl bg-blue-500 blur-2xl"></div>
           <span class="relative z-10 text-4xl font-black uppercase tracking-[0.2em] text-white">TL</span>
         </div>
       </div>
 
-      <h2 class="mb-4 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-[0.3em] text-blue-400">
+      <h2
+        class="mb-4 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-[0.3em] text-blue-400">
         <span class="h-px w-8 bg-blue-900"></span>
         Unified Operations Portal
         <span class="h-px w-8 bg-blue-900"></span>
       </h2>
-      
+
       <h1 class="mb-6 text-5xl font-black tracking-tighter text-white sm:text-7xl">
-        TechLoc <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-blue-600">Network</span>
+        TechLoc <span
+          class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-blue-600">Network</span>
       </h1>
 
       <p class="mx-auto mb-10 max-w-2xl text-xl leading-relaxed text-slate-400">
@@ -91,116 +96,24 @@
       </p>
 
       <div class="flex flex-wrap items-center justify-center gap-4">
-        <a id="hero-login-btn" href="pages/login.html" 
+        <a id="hero-login-btn" href="pages/login.html"
           class="inline-flex items-center gap-2 rounded-full bg-blue-600 px-8 py-4 text-sm font-bold text-white shadow-xl shadow-blue-900/40 transition-all hover:bg-blue-50 hover:text-blue-600 hover:-translate-y-1">
           <i data-lucide="log-in" class="h-4 w-4"></i>
           Get Started
         </a>
-        <a id="hero-dashboard-btn" href="pages/admin/index.html" 
+        <a id="hero-dashboard-btn" href="pages/admin/index.html"
           class="hidden inline-flex items-center gap-2 rounded-full bg-slate-800 border border-slate-700 px-8 py-4 text-sm font-bold text-white transition-all hover:bg-slate-700 hover:border-blue-500 hover:-translate-y-1">
           <i data-lucide="layout-dashboard" class="h-4 w-4"></i>
           Access Dashboard
         </a>
-        <a href="#modules" class="inline-flex items-center gap-2 rounded-full bg-transparent px-8 py-4 text-sm font-bold text-slate-400 transition-all hover:text-white">
+        <a href="#modules"
+          class="inline-flex items-center gap-2 rounded-full bg-transparent px-8 py-4 text-sm font-bold text-slate-400 transition-all hover:text-white">
           Explore Modules
           <i data-lucide="arrow-down" class="h-4 w-4 animate-bounce-subtle"></i>
         </a>
       </div>
     </div>
 
-    <!-- Modules Grid -->
-    <section id="modules" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-      
-      <!-- Live Map Card -->
-      <a href="pages/vehicles.html" class="module-card group relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/40 p-1 backdrop-blur-xl">
-        <div class="relative z-10 h-full rounded-[22px] bg-slate-950/50 p-8">
-          <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-400 group-hover:scale-110 transition-transform">
-            <i data-lucide="map-pin" class="h-8 w-8"></i>
-          </div>
-          <h3 class="mb-2 text-xl font-bold text-white">Live Operations</h3>
-          <p class="mb-6 text-sm leading-relaxed text-slate-400">Visualize fleet movement, technician availability, and nationwide dispatch statuses in real-time.</p>
-          <div class="flex items-center text-xs font-bold uppercase tracking-widest text-emerald-400">
-            Learn More <i data-lucide="chevron-right" class="ml-1 h-3 w-3"></i>
-          </div>
-        </div>
-        <div class="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-emerald-600/10 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-      </a>
-
-      <!-- Inventory Card -->
-      <a href="pages/inventory-control.html" class="module-card group relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/40 p-1 backdrop-blur-xl">
-        <div class="relative z-10 h-full rounded-[22px] bg-slate-950/50 p-8">
-          <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-400 group-hover:scale-110 transition-transform">
-            <i data-lucide="package" class="h-8 w-8"></i>
-          </div>
-          <h3 class="mb-2 text-xl font-bold text-white">Inventory Control</h3>
-          <p class="mb-6 text-sm leading-relaxed text-slate-400">Manage equipment lifecycle, track asset movements, and optimize supply chain distribution.</p>
-          <div class="flex items-center text-xs font-bold uppercase tracking-widest text-blue-400">
-            Learn More <i data-lucide="chevron-right" class="ml-1 h-3 w-3"></i>
-          </div>
-        </div>
-        <div class="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-blue-600/10 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-      </a>
-
-      <!-- Services Card -->
-      <a href="pages/admin/services.html" class="module-card group relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/40 p-1 backdrop-blur-xl">
-        <div class="relative z-10 h-full rounded-[22px] bg-slate-950/50 p-8">
-          <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-500/10 text-indigo-400 group-hover:scale-110 transition-transform">
-            <i data-lucide="wrench" class="h-8 w-8"></i>
-          </div>
-          <h3 class="mb-2 text-xl font-bold text-white">Service Directory</h3>
-          <p class="mb-6 text-sm leading-relaxed text-slate-400">Comprehensive partner registry with detailed skillsets, geographic coverage, and performance metrics.</p>
-          <div class="flex items-center text-xs font-bold uppercase tracking-widest text-indigo-400">
-            Learn More <i data-lucide="chevron-right" class="ml-1 h-3 w-3"></i>
-          </div>
-        </div>
-        <div class="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-indigo-600/10 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-      </a>
-
-      <!-- Analytics Card -->
-      <a href="pages/admin/analytics.html" class="module-card group relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/40 p-1 backdrop-blur-xl">
-        <div class="relative z-10 h-full rounded-[22px] bg-slate-950/50 p-8">
-          <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-400 group-hover:scale-110 transition-transform">
-            <i data-lucide="bar-chart-3" class="h-8 w-8"></i>
-          </div>
-          <h3 class="mb-2 text-xl font-bold text-white">Fleet Analytics</h3>
-          <p class="mb-6 text-sm leading-relaxed text-slate-400">Interactive data visualization and predictive modeling for fleet optimization and cost reduction.</p>
-          <div class="flex items-center text-xs font-bold uppercase tracking-widest text-amber-400">
-            Learn More <i data-lucide="chevron-right" class="ml-1 h-3 w-3"></i>
-          </div>
-        </div>
-        <div class="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-amber-600/10 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-      </a>
-
-      <!-- Titles Card -->
-      <a href="pages/admin/titles.html" class="module-card group relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/40 p-1 backdrop-blur-xl">
-        <div class="relative z-10 h-full rounded-[22px] bg-slate-950/50 p-8">
-          <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-400 group-hover:scale-110 transition-transform">
-            <i data-lucide="file-text" class="h-8 w-8"></i>
-          </div>
-          <h3 class="mb-2 text-xl font-bold text-white">Title Compliance</h3>
-          <p class="mb-6 text-sm leading-relaxed text-slate-400">Track vehicle title status, physical location, and regulatory compliance throughout the asset lifecycle.</p>
-          <div class="flex items-center text-xs font-bold uppercase tracking-widest text-cyan-400">
-            Learn More <i data-lucide="chevron-right" class="ml-1 h-3 w-3"></i>
-          </div>
-        </div>
-        <div class="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-cyan-600/10 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-      </a>
-
-      <!-- Contact Card -->
-      <a href="pages/contact.html" class="module-card group relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/40 p-1 backdrop-blur-xl">
-        <div class="relative z-10 h-full rounded-[22px] bg-slate-950/50 p-8">
-          <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-400 group-hover:scale-110 transition-transform">
-            <i data-lucide="help-circle" class="h-8 w-8"></i>
-          </div>
-          <h3 class="mb-2 text-xl font-bold text-white">Support Center</h3>
-          <p class="mb-6 text-sm leading-relaxed text-slate-400">Direct coordination with system administrators and technical support for field operations.</p>
-          <div class="flex items-center text-xs font-bold uppercase tracking-widest text-rose-400">
-            Learn More <i data-lucide="chevron-right" class="ml-1 h-3 w-3"></i>
-          </div>
-        </div>
-        <div class="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-rose-600/10 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-      </a>
-    </section>
 
     <!-- Stats Banner -->
     <div class="mt-20 rounded-3xl border border-slate-800 bg-slate-900/30 p-8 backdrop-blur-md">
@@ -227,7 +140,8 @@
     <!-- Footer Meta -->
     <div class="mt-16 text-center space-y-4">
       <p class="text-xs text-slate-500 font-medium">
-        TechLoc System &copy; 2026. Operated by <a href="mailto:JReynoso111@gmail.com" class="text-blue-400 hover:text-blue-300 transition-colors">JReynoso111@gmail.com</a>
+        TechLoc System &copy; 2026. Operated by <a href="mailto:JReynoso111@gmail.com"
+          class="text-blue-400 hover:text-blue-300 transition-colors">JReynoso111@gmail.com</a>
       </p>
       <div class="flex items-center justify-center gap-6">
         <span class="h-px w-12 bg-slate-800"></span>
@@ -288,7 +202,7 @@
       const isLoggedIn = !!session;
       const loginBtn = document.getElementById('hero-login-btn');
       const dashboardBtn = document.getElementById('hero-dashboard-btn');
-      
+
       if (loginBtn) loginBtn.classList.toggle('hidden', isLoggedIn);
       if (dashboardBtn) dashboardBtn.classList.toggle('hidden', !isLoggedIn);
     };
@@ -299,10 +213,11 @@
       createConstellationBackground();
       fetchServiceStats();
       updateAuthUI();
-      
+
       // Listen for auth changes to update hero buttons
       AuthService.onAuthStateChange(() => updateAuthUI());
     });
   </script>
 </body>
+
 </html>
