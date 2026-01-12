@@ -2,14 +2,15 @@ import { defineConfig } from 'vite';
 import { resolve } from 'path';
 
 export default defineConfig({
+    base: '/TechlocSave/',
     root: '.',
     build: {
+        target: 'esnext',
         outDir: 'dist',
         rollupOptions: {
             input: {
                 main: resolve(__dirname, 'index.html'),
                 login: resolve(__dirname, 'pages/login.html'),
-                about: resolve(__dirname, 'pages/about.html'),
                 contact: resolve(__dirname, 'pages/contact.html'),
                 vehicles: resolve(__dirname, 'pages/vehicles.html'),
                 inventoryControl: resolve(__dirname, 'pages/inventory-control.html'),
