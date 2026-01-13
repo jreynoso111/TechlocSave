@@ -12,6 +12,7 @@
 
 
   <link rel="stylesheet" href="../../assets/visuals/theme.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
   <script type="module" src="../../assets/scripts/authManager.js"></script>
   <script type="module" src="../../assets/scripts/admin-auth.js"></script>
   <style>
@@ -71,8 +72,6 @@
       }
     }
   </style>
-  <link rel="stylesheet" href="../../assets/visuals/theme.css" />
-  <script type="module" src="../../assets/scripts/authManager.js"></script>
 </head>
 
 <body class="min-h-screen text-slate-50 relative selection:bg-blue-500/30 overflow-x-hidden">
@@ -313,7 +312,7 @@
       loadPreferredBackgroundMode,
       persistBackgroundMode,
     } from '../../assets/scripts/backgroundPreference.js';
-    import { supabase as supabaseClient } from '../../assets/js/supabaseClient.js';
+    import { supabase as supabaseClient } from '../../assets/scripts/supabaseClient.js';
 
     // --- CONFIG ---
     // Alinear nombres de tabla con la vista principal de Services
@@ -607,18 +606,6 @@
       await loadChangeLog();
     })();
   </script>
-  <script type="module">
-    import { supabase as supabaseClient } from '../../assets/js/supabaseClient.js';
-
-    const redirectToLogin = async () => {
-      if (!supabaseClient?.auth?.getSession) return;
-      const { data } = await supabaseClient.auth.getSession();
-      if (!data?.session) {
-        window.location.href = '../login.html';
-      }
-    };
-
-    redirectToLogin();
   </script>
 </body>
 

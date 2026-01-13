@@ -18,7 +18,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <script type="module" src="../../assets/js/supabaseClient.js"></script>
+  <script type="module" src="../../assets/scripts/supabaseClient.js"></script>
 
   <script type="module" src="../../assets/scripts/authManager.js"></script>
 
@@ -362,7 +362,7 @@
       loadPreferredBackgroundMode,
       persistBackgroundMode,
     } from '../../assets/scripts/backgroundPreference.js';
-    import { supabase as supabaseClient } from '../../assets/js/supabaseClient.js';
+    import { supabase as supabaseClient } from '../../assets/scripts/supabaseClient.js';
     import { logAdminEvent } from '../../assets/scripts/adminAudit.js';
 
 
@@ -1900,18 +1900,6 @@ ACTIVE,108129 ,Trailer,2022,DVHDHPC 53',264779,  Out for Repo,66.57%,All,2x unin
 
   </script>
 
-  <script type="module">
-    import { supabase as supabaseClient } from '../../assets/js/supabaseClient.js';
-
-    const redirectToLogin = async () => {
-      if (!supabaseClient?.auth?.getSession) return;
-      const { data } = await supabaseClient.auth.getSession();
-      if (!data?.session) {
-        window.location.href = '../login.html';
-      }
-    };
-
-    redirectToLogin();
   </script>
 </body>
 

@@ -10,6 +10,8 @@
 
 
   <link rel="stylesheet" href="../../assets/visuals/theme.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script type="module" src="../../assets/scripts/authManager.js"></script>
   <script type="module" src="../../assets/scripts/admin-auth.js"></script>
@@ -395,9 +397,12 @@
 
   <!-- HEADER -->
   <div id="header-root"></div>
+  <div id="admin-header-root"></div>
   <script type="module">
     import { renderHeader } from '../../assets/components/Header.js';
+    import { renderAdminHeader } from '../../assets/components/AdminHeader.js';
     renderHeader('header-root');
+    renderAdminHeader('admin-header-root');
   </script>
 
   <div class="pointer-events-none fixed inset-0 z-0 mix-blend-screen" aria-hidden="true">
@@ -553,7 +558,7 @@
       loadPreferredBackgroundMode,
       persistBackgroundMode,
     } from '../../assets/scripts/backgroundPreference.js';
-    import { supabase as supabaseClient } from '../../assets/js/supabaseClient.js';
+    import { supabase as supabaseClient } from '../../assets/scripts/supabaseClient.js';
     import { logAdminEvent } from '../../assets/scripts/adminAudit.js';
 
     const READ_TABLE = 'Services';
@@ -700,6 +705,24 @@
       // inline edit session
       inlineEdit: { td: null, rowId: null, colId: null, original: null, inputEl: null, saving: false, skipBlurCommit: false }
     };
+
+    // ================== AUTH SYNC ==================
+    const syncAuthState = async () => {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (session) {
+        state.currentUserId = session.user.id;
+        state.currentUserEmail = session.user.email;
+        // The role might not be in the session, we get it from window (set by admin-auth.js)
+        state.currentUserRole = window.currentUserRole || 'user';
+      }
+    };
+
+    window.addEventListener('auth:role-updated', (e) => {
+      state.currentUserRole = e.detail.role || 'user';
+      renderTable(); // Re-render to show/hide edit actions if needed
+    });
+
+    syncAuthState();
 
     // ================== PERSISTENCE ==================
     const STORAGE_PREFIX = 'techloc_services_table_prefs_v1';
@@ -2267,7 +2290,6 @@
 
     const init = async () => {
       await initBackground();
-      await requireSession();
       attachResizeHandles();
       attachScrollSync();
       attachAnalyticsResizeObserver();
@@ -2278,19 +2300,6 @@
       lucide.createIcons();
     };
     init();
-  </script>
-  <script type="module">
-    import { supabase as supabaseClient } from '../../assets/js/supabaseClient.js';
-
-    const redirectToLogin = async () => {
-      if (!supabaseClient?.auth?.getSession) return;
-      const { data } = await supabaseClient.auth.getSession();
-      if (!data?.session) {
-        window.location.href = '../login.html';
-      }
-    };
-
-    redirectToLogin();
   </script>
 </body>
 

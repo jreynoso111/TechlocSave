@@ -1,10 +1,15 @@
 import { SUPABASE_KEY, SUPABASE_URL } from './env.js';
 import { supabase as sharedSupabaseClient } from './supabaseClient.js';
 
-const LOGIN_PAGE = '/pages/login.html';
-const ADMIN_HOME = '/pages/admin/index.html';
-const CONTROL_VIEW = '/pages/vehicles.html';
-const HOME_PAGE = '/index.html';
+const getBasePath = () => {
+  return window.location.hostname.includes('github.io') ? '/TechlocSave' : '';
+};
+
+const BASE_PATH = getBasePath();
+const LOGIN_PAGE = BASE_PATH + '/pages/login.html';
+const ADMIN_HOME = BASE_PATH + '/pages/admin/index.html';
+const CONTROL_VIEW = BASE_PATH + '/pages/vehicles.html';
+const HOME_PAGE = BASE_PATH + '/index.html';
 
 
 const supabaseClient =

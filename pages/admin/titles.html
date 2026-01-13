@@ -12,7 +12,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.5/dist/chart.umd.min.js"></script>
 
-  <script type="module" src="../../assets/js/supabaseClient.js"></script>
+  <script type="module" src="../../assets/scripts/supabaseClient.js"></script>
   <script type="module" src="../../assets/scripts/authManager.js"></script>
   <script type="module" src="../../assets/scripts/admin-auth.js"></script>
 
@@ -558,7 +558,7 @@
       loadPreferredBackgroundMode,
       persistBackgroundMode,
     } from '../../assets/scripts/backgroundPreference.js';
-    import { supabase as supabaseClientModule } from '../../assets/js/supabaseClient.js';
+    import { supabase as supabaseClientModule } from '../../assets/scripts/supabaseClient.js';
     import { SUPABASE_KEY, SUPABASE_URL } from '../../assets/scripts/env.js';
     import { logAdminEvent } from '../../assets/scripts/adminAudit.js';
 
@@ -2446,18 +2446,6 @@
 
     init();
   </script>
-  <script type="module">
-    import { supabase as supabaseClient } from '../../assets/js/supabaseClient.js';
-
-    const redirectToLogin = async () => {
-      if (!supabaseClient?.auth?.getSession) return;
-      const { data } = await supabaseClient.auth.getSession();
-      if (!data?.session) {
-        window.location.href = '../login.html';
-      }
-    };
-
-    redirectToLogin();
   </script>
 </body>
 
