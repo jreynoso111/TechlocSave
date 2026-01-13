@@ -22,7 +22,6 @@
     };
   </script>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <link rel="stylesheet" href="./assets/visuals/theme.css" />
@@ -139,8 +138,9 @@
   </main>
 
   <script type="module">
-    // Importación con ruta relativa corregida
+    // Imports with relative paths
     import { createConstellationBackground } from './assets/scripts/constellation.js';
+    import { supabase } from './assets/scripts/supabaseClient.js';
 
     const animateValue = (id, end) => {
       const el = document.getElementById(id);
