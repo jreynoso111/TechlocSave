@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 import { SUPABASE_KEY, SUPABASE_URL } from './env.js';
 
 if (!SUPABASE_URL || !SUPABASE_KEY) {

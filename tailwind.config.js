@@ -12,12 +12,16 @@ export default {
             },
             colors: {
                 slate: {
+                    850: '#1a2233',
                     950: '#020617',
                 },
             },
+            boxShadow: {
+                dashboard: '0 20px 60px rgba(15, 23, 42, 0.45)',
+            },
             animation: {
                 'bounce-subtle': 'bounce-subtle 2s infinite',
-                'glow': 'glow 4s ease-in-out infinite',
+                'glow': 'glow 2s ease-in-out infinite alternate',
             },
             keyframes: {
                 'bounce-subtle': {
@@ -25,8 +29,8 @@ export default {
                     '50%': { transform: 'translateY(0)', animationTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)' },
                 },
                 'glow': {
-                    '0%, 100%': { opacity: '0.4', transform: 'scale(1)' },
-                    '50%': { opacity: '0.8', transform: 'scale(1.1)' },
+                    '0%': { opacity: '0.4', transform: 'scale(1)' },
+                    '100%': { opacity: '0.8', transform: 'scale(1.05)' },
                 }
             }
         },
